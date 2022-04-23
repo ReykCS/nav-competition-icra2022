@@ -1,7 +1,7 @@
 <launch>
   <arg name="use_sim_time" default="true" />
-  <arg name="gui" default="false" />
-  <arg name="headless" default="true" />
+  <arg name="gui" default="true" />
+  <arg name="headless" default="false" />
   <arg name="world_name" default="$(find jackal_helper)/worlds/jackal_race.world" />
 
   <!-- Short-term hack to support the original front_laser:=true argument for spawning
@@ -9,6 +9,7 @@
   <arg name="front_laser" default="false" />
   <arg name="default_config" value="front_laser" if="$(arg front_laser)" />
   <arg name="default_config" value="base" unless="$(arg front_laser)" />
+  <arg name="use_rviz" value="true" />
   <!-- end of hack -->
 
   <!-- Configuration of Jackal which you would like to simulate.

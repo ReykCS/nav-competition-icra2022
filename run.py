@@ -10,6 +10,8 @@ import rospkg
 
 from gazebo_simulation import GazeboSimulation
 
+from geometry_msgs.msg import PoseStamped
+
 INIT_POSITION = [-2, 3, 1.57]  # in world frame
 GOAL_POSITION = [0, 10]  # relative to the initial position
 
@@ -86,20 +88,24 @@ if __name__ == "__main__":
     ## (Customize this block to add your own navigation stack)
     ##########################################################################################
     
-    launch_file = join(base_path, '..', 'jackal_helper/launch/move_base_DWA.launch')
     nav_stack_process = subprocess.Popen([
         'roslaunch',
-        launch_file,
+        'jackal_helper',
+        'move_base_rosnav.launch',
+        f"goal_x:={GOAL_POSITION[0]}",
+        f"goal_y:={GOAL_POSITION[1]}",
+        'goal_z:=0'
     ])
     
-    # Make sure your navigation stack recives a goal of (0, 10, 0), which is 10 meters away
-    # along postive y-axis.
+    # # Make sure your navigation stack recives a goal of (0, 10, 0), which is 10 meters away
+    # # along postive y-axis.
     import actionlib
     from geometry_msgs.msg import Quaternion
     from move_base_msgs.msg import MoveBaseGoal, MoveBaseAction
+
     nav_as = actionlib.SimpleActionClient('/move_base', MoveBaseAction)
     mb_goal = MoveBaseGoal()
-    mb_goal.target_pose.header.frame_id = 'odom'
+    mb_goal.target_pose.header.frame_id = 'map'
     mb_goal.target_pose.pose.position.x = GOAL_POSITION[0]
     mb_goal.target_pose.pose.position.y = GOAL_POSITION[1]
     mb_goal.target_pose.pose.position.z = 0
