@@ -137,8 +137,6 @@ class ObservationCollector:
             self._subgoal, self._robot_pose
         )
 
-        print(rho, theta, self._subgoal, self._robot_pose)
-
         rosnav_obs = np.hstack([scan, np.array([rho, theta])])
 
         obs_dict = {

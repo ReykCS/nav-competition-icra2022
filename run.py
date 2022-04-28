@@ -96,6 +96,13 @@ if __name__ == "__main__":
         f"goal_y:={GOAL_POSITION[1]}",
         'goal_z:=0'
     ])
+
+    # launch_file = join(base_path, '..', 'jackal_helper/launch/move_base_DWA.launch')
+    # nav_stack_process = subprocess.Popen([
+    #     'roslaunch',
+    #     launch_file,
+    # ])
+    
     
     # # Make sure your navigation stack recives a goal of (0, 10, 0), which is 10 meters away
     # # along postive y-axis.
@@ -105,7 +112,7 @@ if __name__ == "__main__":
 
     nav_as = actionlib.SimpleActionClient('/move_base', MoveBaseAction)
     mb_goal = MoveBaseGoal()
-    mb_goal.target_pose.header.frame_id = 'map'
+    mb_goal.target_pose.header.frame_id = 'odom'
     mb_goal.target_pose.pose.position.x = GOAL_POSITION[0]
     mb_goal.target_pose.pose.position.y = GOAL_POSITION[1]
     mb_goal.target_pose.pose.position.z = 0

@@ -15,7 +15,8 @@ void SpacialHorizon::init(ros::NodeHandle &nh)
     node_.param("fsm/goal_tolerance",    goal_tolerance_, 0.5);
     node_.param("fsm/subgoal_tolerance", subgoal_tolerance_, 2.0);
     node_.param("fsm/subgoal_pub_period", subgoal_pub_period_, 0.5);
-    node_.param("fsm/planning_horizen", planning_horizen_, 3.0);
+    // node_.param("fsm/planning_horizen", planning_horizen_, 1.0);
+    this->planning_horizen_ = 0.1;
 
     /* callback */
     //exec_timer_ = node_.createTimer(ros::Duration(0.01), &SpacialHorizon::execStateCallback, this);
@@ -76,7 +77,7 @@ void SpacialHorizon::goalCallback(const geometry_msgs::PoseStampedPtr& msg){
     end_vel_=Eigen::Vector2d::Zero();
 
     have_goal_=true;
-    std::cout << "[SpacialHorizon] Goal set!" << std::endl;
+    // std::cout << "[SpacialHorizon] Goal set!" << std::endl;
 
     getGlobalPath_MoveBase();
 
@@ -116,10 +117,10 @@ bool SpacialHorizon::getSubgoalSpacialHorizon(Eigen::Vector2d &subgoal){
         }
     }
     
-    if(subgoal_id>0){
+    if ( subgoal_id > 0 ) {
         subgoal = Eigen::Vector2d(global_plan.response.plan.poses[subgoal_id].pose.position.x, global_plan.response.plan.poses[subgoal_id].pose.position.y);
         return true;
-    }else{
+    } else {
         // because spacial horizon based on global path, so it needs global replan; for timed_astar it doesn't need
         //changeFSMExecState(GEN_NEW_GLOBAL, "SUBGOAL");
         return false;
@@ -129,7 +130,7 @@ bool SpacialHorizon::getSubgoalSpacialHorizon(Eigen::Vector2d &subgoal){
 
 void SpacialHorizon::updateSubgoalDRLCallback(const ros::TimerEvent &e){
     //if there's no goal
-    if(!have_goal_) return; 
+    if ( !have_goal_ ) return; 
     
     // get subgoal
     bool subgoal_success=false;
@@ -138,8 +139,8 @@ void SpacialHorizon::updateSubgoalDRLCallback(const ros::TimerEvent &e){
     subgoal_success=getSubgoalSpacialHorizon(subgoal);
             
     // if to far away from subgoal -> recompute global path and subgoal
-    double dist_to_subgoal=(odom_pos_-subgoal).norm();
-    if(dist_to_subgoal > planning_horizen_ + 1.0){
+    double dist_to_subgoal = (odom_pos_ - subgoal).norm();
+    if(dist_to_subgoal > planning_horizen_ + 1.0)   {
         std::cout<< "[Spacial Horizon]: Too far away from subgoal! Recomputing global path" << std::endl;
         getGlobalPath_MoveBase();
         subgoal_success=getSubgoalSpacialHorizon(subgoal);
@@ -150,7 +151,7 @@ void SpacialHorizon::updateSubgoalDRLCallback(const ros::TimerEvent &e){
     if(subgoal_success){
         geometry_msgs::PoseStamped pose_stamped;
         pose_stamped.header.stamp=ros::Time::now();
-        pose_stamped.header.frame_id = "map";
+        pose_stamped.header.frame_id = "odom";
         pose_stamped.pose.position.x=subgoal(0);
         pose_stamped.pose.position.y=subgoal(1);
         pose_stamped.pose.position.z=0.0;
@@ -191,7 +192,7 @@ void SpacialHorizon::getGlobalPath_MoveBase(){
 }
 
 void SpacialHorizon::fillPathRequest(nav_msgs::GetPlan::Request &request){
-	request.start.header.frame_id ="map";
+	request.start.header.frame_id ="odom";
     // if(is_real){
     //     request.start.pose.position.x = initial_pose_[0];//x coordinate of the initial position
     //     request.start.pose.position.y = initial_pose_[1];//y coordinate of the initial position
@@ -200,7 +201,7 @@ void SpacialHorizon::fillPathRequest(nav_msgs::GetPlan::Request &request){
     request.start.pose.position.y = odom_pos_[1];//y coordinate of the initial position
     // }
     request.start.pose.orientation.w = 1.0;//direction
-	request.goal.header.frame_id = "map";
+	request.goal.header.frame_id = "odom";
 	request.goal.pose.position.x = end_pos_[0];//End point coordinates
 	request.goal.pose.position.y = end_pos_[1];
 	request.goal.pose.orientation.w = 1.0;
@@ -215,10 +216,10 @@ void SpacialHorizon::callPlanningService(ros::ServiceClient &serviceClient, nav_
 		if (!srv.response.plan.poses.empty()) {
 			visualizeGlobalPath(vis_global_path_pub_);
             globalPlan_DRL_pub_.publish(srv.response.plan);
-		}else{
+		} else {
 			ROS_WARN("[SpacialHorizon - GET_PATH] Got empty plan");
 		}
-	}else {
+	} else {
 		ROS_ERROR("[SpacialHorizon - GET_PATH] Failed to call service %s - is the robot moving?",
 		serviceClient.getService().c_str());
 	}
