@@ -111,7 +111,9 @@ class DeploymentDRLAgent(BaseDRLAgent):
 
 def main() -> None:
     # TODO load from args if no params
-    agent_name = rospy.get_param("agent_name", "jackal_new")
+    agent_name = rospy.get_param("agent_name", "jackal_barn4")
+
+    print("running agent {}".format(agent_name))
 
     AGENT = DeploymentDRLAgent(
         agent_name=agent_name,

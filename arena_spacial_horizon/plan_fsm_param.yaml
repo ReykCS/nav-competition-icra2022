@@ -6,11 +6,11 @@ subgoal_mode: &subgoal_mode 0                       # 0: spacial_horizon 1:timed
 # ------------------------------------------------------------------------------------------------------
 # other main parameters (not relevant for this evaluation)
 subgoal_pub_period: &subgoal_pub_period 0.5             # sec
-goal_tolerance: &goal_tolerance 0.5
+goal_tolerance: &goal_tolerance 0.1
 subgoal_tolerance: &subgoal_tolerance 1.0
 
 planning_time_horizon: &planning_time_horizon 3.0     # sec look ahead time
-planning_horizen: &planning_horizen 0.1                 # m   look ahead distance
+planning_horizen: &planning_horizen 0.2                 # 10 m   look ahead distance
 sensor_range: &sensor_range 3.5                         # m   laser sensor range
 
 max_vel: &max_vel 2.0                                 # m/s   robot max vel

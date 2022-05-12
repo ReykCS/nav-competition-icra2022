@@ -193,12 +193,8 @@ void SpacialHorizon::getGlobalPath_MoveBase(){
 
 void SpacialHorizon::fillPathRequest(nav_msgs::GetPlan::Request &request){
 	request.start.header.frame_id ="odom";
-    // if(is_real){
-    //     request.start.pose.position.x = initial_pose_[0];//x coordinate of the initial position
-    //     request.start.pose.position.y = initial_pose_[1];//y coordinate of the initial position
-    // }else{
-    request.start.pose.position.x = odom_pos_[0];//x coordinate of the initial position
-    request.start.pose.position.y = odom_pos_[1];//y coordinate of the initial position
+    request.start.pose.position.x = odom_pos_[0];
+    request.start.pose.position.y = odom_pos_[1];
     // }
     request.start.pose.orientation.w = 1.0;//direction
 	request.goal.header.frame_id = "odom";
@@ -229,7 +225,7 @@ void SpacialHorizon::callPlanningService(ros::ServiceClient &serviceClient, nav_
 /* Visualization */
 void SpacialHorizon::visualizePoints(const std::vector<Eigen::Vector2d>& point_set, double pt_size, const Eigen::Vector4d& color, const ros::Publisher & pub) {
   visualization_msgs::Marker mk;
-  mk.header.frame_id = "map";
+  mk.header.frame_id = "odom";
   mk.header.stamp    = {};//ros::Time::now();
   mk.type            = visualization_msgs::Marker::SPHERE_LIST;
   mk.action          = visualization_msgs::Marker::DELETE;
@@ -264,7 +260,7 @@ void SpacialHorizon::visualizePoints(const std::vector<Eigen::Vector2d>& point_s
 void SpacialHorizon::visualizeGlobalPath(const ros::Publisher & pub){
   //create a path message
   ros::Time plan_time = {};//ros::Time::now();
-  std::string global_frame="/map";
+  std::string global_frame="odom";
   
   nav_msgs::Path gui_path;
   gui_path.poses.resize(global_plan.response.plan.poses.size());
