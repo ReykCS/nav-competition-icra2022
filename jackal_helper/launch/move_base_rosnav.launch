@@ -5,7 +5,7 @@
   <arg name="model" default="turtlebot3_burger"/>
   <arg name="cmd_vel_topic" default="cmd_vel" />
   <arg name="odom_topic" default="odom" />
-  <arg name="agent_name" default="jackal_new"/>
+  <arg name="agent_name" default="jackal_barn4"/>
   <arg name="use_rviz" default="true"/>
   <arg name="trainings_environment" default="rosnav" />
   <arg name="goal_x" default="0" />

@@ -98,7 +98,7 @@ class ObservationCollector:
             )
 
             self._robot_state_sub = rospy.Subscriber(
-                f"{self.ns_prefix}odom",
+                f"{self.ns_prefix}odometry/filtered",
                 Odometry,
                 self.callback_robot_state,
                 tcp_nodelay=True,

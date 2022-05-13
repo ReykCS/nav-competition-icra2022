@@ -1,5 +1,5 @@
 Bootstrap: docker
-From: ros:melodic
+From: ros:noetic
 
 %setup
     mkdir -p ${SINGULARITY_ROOTFS}/jackal_ws/src
@@ -12,20 +12,23 @@ From: ros:melodic
     python3 -m venv /venv
     export PATH="/venv/bin:$PATH"
     pip3 install --upgrade pip
-    pip3 install defusedxml rospkg netifaces numpy
+    pip3 uninstall em
+    pip3 install defusedxml rospkg netifaces numpy pyyaml empy scipy torch==1.7 torchvision==0.8 tensorboard scipy gym stable-baselines3
     
     cd /jackal_ws/src
-    git clone https://github.com/jackal/jackal.git --branch melodic-devel
-    git clone https://github.com/jackal/jackal_simulator.git --branch melodic-devel
-    git clone https://github.com/jackal/jackal_desktop.git --branch melodic-devel
-    git clone https://github.com/utexas-bwi/eband_local_planner.git
+    git clone https://github.com/jackal/jackal.git
+    git clone https://github.com/jackal/jackal_simulator.git
+    git clone https://github.com/jackal/jackal_desktop.git
+    chmod +x nav-competition-icra2022/arena_local_planner_drl/scripts/deployment/drl_agent_node.py
+    chmod +x nav-competition-icra2022/arena_local_planner_drl/scripts/goal_publisher.py
+    chmod +x nav-competition-icra2022/arena_spacial_horizon/src/spacial_horizon_node.cpp
 
-    source /opt/ros/melodic/setup.bash
+    source /opt/ros/noetic/setup.bash
     cd ..
     rosdep init; rosdep update
-    rosdep install -y --from-paths . --ignore-src --rosdistro=melodic
+    rosdep install -y --from-paths . --ignore-src --rosdistro=noetic
     source devel/setup.bash
-    catkin_make
+    catkin_make -DCMAKE_CXX_STANDARD=17
 
 %environment
     export PATH="/venv/bin:$PATH"
